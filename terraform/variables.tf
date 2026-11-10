@@ -35,23 +35,8 @@ variable "vpc_cidr_block" {
   type        = string
 }
 
-variable "PUBLIC_IP" {
-  description = "Allowed CIDR blocks for Public IP"
-  type        = string
-}
-
-variable "sub_public_availability_zone" {
-  description = "Allowed CIDR blocks for Public Subnet Availability Zone"
-  type        = string
-}
-
 variable "sub_public_cidr_block" {
   description = "Allowed CIDR blocks for Public Subnet"
-  type        = string
-}
-
-variable "sub_private_availability_zone" {
-  description = "Allowed CIDR blocks for Private Subnet Availability Zone"
   type        = string
 }
 
