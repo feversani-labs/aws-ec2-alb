@@ -15,6 +15,7 @@ jobs:
       AWS_REGION: ${{ vars.REGION }}
       TF_VAR_region: ${{ vars.REGION }}
       TF_VAR_PUBLIC_IP: ${{ secrets.PUBLIC_IP }}
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

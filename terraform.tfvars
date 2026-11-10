@@ -1,5 +1,7 @@
 //// EC2 ////
-instance_name = "my-instances"
+aws_instance_name = "my-instances"
+aws_instance_type = "t3.micro"
+
 
 //// NTW ////
 sub_public_availability_zone  = "a"

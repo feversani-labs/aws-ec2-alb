@@ -17,23 +17,16 @@ variable "environment" {
 
 //// EC2 ////
 
-variable "instance_name" {
+variable "aws_instance_name" {
   description = "AWS EC2 Instance Name"
   type        = string
-  default     = ""
 }
 
-variable "AWS_INSTANCE_TYPE" {
+variable "aws_instance_type" {
   description = "AWS EC2 Instance Type"
   type        = string
-  default     = "t2.micro"
 }
 
-variable "AWS_AMI" {
-  description = "AWS AMI ID"
-  type        = string
-  default     = ""
-}
 
 //// NTW ////
 
