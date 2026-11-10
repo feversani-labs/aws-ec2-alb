@@ -14,11 +14,23 @@ resource "aws_subnet" "public_subnet" {
 resource "aws_subnet" "private_subnet" {
   vpc_id            = aws_vpc.my_vpc.id
   cidr_block        = var.sub_private_cidr_block
-  availability_zone = data.aws_availability_zones.available.names[1]
+  availability_zone = data.aws_availability_zones.available.names[0]
 }
 
 resource "aws_internet_gateway" "my_igw" {
   vpc_id = aws_vpc.my_vpc.id
+}
+
+resource "aws_eip" "nat_eip" {
+  domain     = "vpc"
+  depends_on = [aws_internet_gateway.my_igw]
+}
+
+resource "aws_nat_gateway" "my_nat" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.public_subnet.id 
+
+  depends_on = [aws_internet_gateway.my_igw]
 }
 
 resource "aws_route_table" "public_route_table" {
@@ -33,19 +45,6 @@ resource "aws_route_table" "public_route_table" {
 resource "aws_route_table_association" "public_subnet_association" {
   subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public_route_table.id
-}
-
-
-resource "aws_eip" "nat_eip" {
-  domain     = "vpc"
-  depends_on = [aws_internet_gateway.my_igw]
-}
-
-resource "aws_nat_gateway" "my_nat" {
-  allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public_subnet.id 
-
-  depends_on = [aws_internet_gateway.my_igw]
 }
 
 resource "aws_route_table" "private_route_table" {
