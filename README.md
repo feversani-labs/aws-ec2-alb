@@ -1,10 +1,10 @@
-# AWS Multi-AZ Secure Infrastructure with Terraform & GitHub Actions
+# AWS Secure VPC & Private EC2 Architecture with Terraform & GitHub Actions
 
 [![Terraform Deploy](https://github.com/feversani-labs/my-aws-ec2/actions/workflows/terraform.yml/badge.svg)](https://github.com/feversani-labs/my-aws-ec2/actions/workflows/terraform.yml)
 
-Este proyecto implementa una infraestructura automatizada, segura y de alta disponibilidad en **AWS** utilizando **Terraform (IaC)** y un pipeline de CI/CD con **GitHub Actions**.
+Este proyecto implementa una infraestructura automatizada y segura en **AWS** utilizando **Terraform (IaC)** y un pipeline de CI/CD con **GitHub Actions**.
 
-La arquitectura despliega una aplicación web contenarizada en **Docker** sobre una instancia **EC2 en una subnet privada**, accesible al público únicamente a través de un **Application Load Balancer (ALB) Multi-AZ**, y administrable de forma segura mediante **AWS Systems Manager (SSM)** sin exponer el puerto 22 (SSH).
+La arquitectura despliega una aplicación web contenarizada en **Docker** sobre una instancia **EC2 aislada en una subnet privada**, accesible al público únicamente a través de un **Application Load Balancer (ALB)** desplegado en subnets públicas, y administrable de forma segura mediante **AWS Systems Manager (SSM)** sin exponer el puerto 22 (SSH).
 
 ---
 
@@ -20,7 +20,7 @@ Este repositorio forma parte de una solución modular para **cuentas efímeras y
 
 ## 🏛️ Diagrama de Arquitectura
 
-![AWS Multi-AZ Secure Infrastructure](docs/architecture.png)
+![AWS Secure VPC & Private EC2 Architecture](docs/architecture.png)
 
 <details>
 <summary>Ver diagrama interactivo en Mermaid</summary>
@@ -73,7 +73,7 @@ flowchart TD
 | **Aislamiento en Subnet Privada** | La instancia de cómputo no tiene dirección IP pública y no es alcanzable directamente desde internet. |
 | **Zero-SSH / SSM Session Manager** | No se abren puertos de administración (22) ni se gestionan llaves `.pem`. La conexión se realiza autenticada mediante IAM y auditada por CloudTrail. |
 | **Defensa en Capas (Security Groups)** | El Security Group de la EC2 solo permite tráfico entrante por el puerto 80 si proviene del Security Group del ALB. |
-| **Alta Disponibilidad (Multi-AZ)** | El Application Load Balancer se distribuye entre 2 Zonas de Disponibilidad (AZs) para cumplir con el estándar de AWS. |
+| **ALB Multi-AZ y Cómputo Single-AZ (PoC)** | El Application Load Balancer se distribuye entre 2 Zonas de Disponibilidad por estándar de AWS, mientras que la EC2 y el NAT Gateway operan en Single-AZ por optimización de costos en sandbox (listo para escalar a un Auto Scaling Group Multi-AZ). |
 | **Salida Segura (NAT Gateway)** | Permite que la EC2 privada descargue actualizaciones de SO y paquetes Docker sin exponer puertos de entrada. |
 | **Backend Remoto Dinámico** | El estado de Terraform (`terraform.tfstate`) se almacena en Amazon S3, resolviendo el nombre del bucket en tiempo de ejecución a través de AWS SSM Parameter Store. |
 
