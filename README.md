@@ -20,6 +20,11 @@ Este repositorio forma parte de una solución modular para **cuentas efímeras y
 
 ## 🏛️ Diagrama de Arquitectura
 
+![AWS Multi-AZ Secure Infrastructure](docs/architecture.png)
+
+<details>
+<summary>Ver diagrama interactivo en Mermaid</summary>
+
 ```mermaid
 flowchart TD
     classDef awsCompute fill:#ED7100,stroke:#232F3E,stroke-width:2px,color:#FFFFFF,font-weight:bold;
@@ -56,6 +61,8 @@ flowchart TD
 
     Developer([👨‍💻 DevOps / Admin]):::client -.->|AWS SSM Session Manager\nEncrypted Tunnel / No SSH| EC2
 ```
+
+</details>
 
 ---
 
