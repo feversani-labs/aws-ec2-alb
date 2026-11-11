@@ -9,6 +9,10 @@ resource "aws_lb" "this" {
   ]
 
   enable_deletion_protection = false
+
+  tags = {
+    Name = "${var.aws_instance_name}-alb"
+  }
 }
 
 resource "aws_lb_listener" "http" {
@@ -38,6 +42,10 @@ resource "aws_lb_target_group" "this" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     matcher             = "200"
+  }
+
+  tags = {
+    Name = "${var.aws_instance_name}-tg"
   }
 }
 

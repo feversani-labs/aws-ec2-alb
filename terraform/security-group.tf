@@ -15,6 +15,10 @@ resource "aws_security_group" "ec2" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = {
+    Name = "${var.aws_instance_name}-ec2-sg"
+  }
 }
 
 
@@ -34,5 +38,9 @@ resource "aws_security_group" "alb" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.aws_instance_name}-alb-sg"
   }
 }

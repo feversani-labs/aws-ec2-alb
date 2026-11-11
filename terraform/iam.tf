@@ -15,8 +15,7 @@ resource "aws_iam_role" "ssm_role" {
   })
 
   tags = {
-    owner       = var.owner
-    environment = var.environment
+    Name = "ec2-ssm-role"
   }
 }
 
@@ -30,8 +29,7 @@ resource "aws_iam_instance_profile" "my_instance_profile" {
   role = aws_iam_role.ssm_role.name
 
   tags = {
-    owner       = var.owner
-    environment = var.environment
+    Name = "ec2-ssm-instance-profile"
   }
 }
 

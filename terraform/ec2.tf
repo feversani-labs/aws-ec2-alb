@@ -16,7 +16,6 @@ resource "aws_instance" "my_instance" {
   }
 
   tags = {
-    Name  = var.aws_instance_name
-    owner = var.owner
+    Name = var.aws_instance_name
   }
 }
