@@ -1,8 +1,46 @@
 # Local .terraform directories
 .terraform/
 
-# Python virtual environment
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Python Virtual Environments
 .venv/
+venv/
+ENV/
+env/
+.env/
+
+# Python Tools & Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Graphviz intermediate files
+docs/architecture
 
 
 # .tfstate files
