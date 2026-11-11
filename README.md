@@ -8,10 +8,24 @@ La arquitectura despliega una aplicación web contenarizada en **Docker** sobre 
 
 ---
 
+## 🔗 Ecosistema e Integración: Ephemeral AWS Sandbox
+
+Este repositorio forma parte de una solución modular para **cuentas efímeras y entornos de sandbox** (como **KodeKloud AWS Playgrounds**), trabajando en conjunto con [**feversani-labs/ephemeral-aws-sandbox**](https://github.com/feversani-labs/ephemeral-aws-sandbox):
+
+1. **Bootstrap del Backend S3:** En el repositorio base se aprovisiona el bucket de estado de Terraform y se guarda su nombre automáticamente en **AWS Systems Manager Parameter Store** (`/ephemeral-aws-sandbox/tfstate/bucket_name`).
+2. **Descubrimiento Dinámico del Estado:** En cada ejecución de GitHub Actions, el pipeline consulta el Parameter Store mediante la AWS CLI y configura el backend de `terraform init` dinámicamente (`-backend-config="bucket=$BUCKET"`), eliminando la necesidad de hardcodear buckets en el código.
+3. **Estrategia de Credenciales (PoC vs Producción):** En este escenario de sandbox efímero provisto por KodeKloud (donde la cuenta vive pocas horas y entrega un usuario IAM), se emplean `AWS_ACCESS_KEY_ID` y `AWS_SECRET_ACCESS_KEY` mediante GitHub Secrets. Como evolución arquitectónica para cuentas permanentes, el diseño contempla la transición hacia **GitHub OIDC (OpenID Connect)** para asumir IAM Roles sin secretos estáticos.
+
+---
+
 ## 🏛️ Diagrama de Arquitectura
 
 ```mermaid
 flowchart TD
+    GHA["GitHub Actions CI/CD"] -->|1. Get Bucket Name| SSM_Param["AWS SSM Parameter Store\n/ephemeral-aws-sandbox/tfstate/bucket_name"]
+    GHA -->|2. State Backend| S3["Amazon S3\nRemote State"]
+    GHA -.->|3. Terraform Apply| VPC
+
     Internet([🌐 Internet]) -->|HTTP :80| ALB[Application Load Balancer\nPublic Subnets Multi-AZ]
     
     subgraph VPC ["AWS VPC (10.0.0.0/16)"]
