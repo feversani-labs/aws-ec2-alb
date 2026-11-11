@@ -1,6 +1,6 @@
 # AWS Multi-AZ Secure Infrastructure with Terraform & GitHub Actions
 
-[![Terraform Deploy](https://github.com/diegofeversani/my-aws-ec2/actions/workflows/terraform.yml/badge.svg)](https://github.com/diegofeversani/my-aws-ec2/actions/workflows/terraform.yml)
+[![Terraform Deploy](https://github.com/feversani-labs/my-aws-ec2/actions/workflows/terraform.yml/badge.svg)](https://github.com/feversani-labs/my-aws-ec2/actions/workflows/terraform.yml)
 
 Este proyecto implementa una infraestructura automatizada, segura y de alta disponibilidad en **AWS** utilizando **Terraform (IaC)** y un pipeline de CI/CD con **GitHub Actions**.
 
@@ -22,24 +22,30 @@ Este repositorio forma parte de una solución modular para **cuentas efímeras y
 
 ```mermaid
 flowchart TD
-    GHA["GitHub Actions CI/CD"] -->|1. Get Bucket Name| SSM_Param["AWS SSM Parameter Store\n/ephemeral-aws-sandbox/tfstate/bucket_name"]
-    GHA -->|2. State Backend| S3["Amazon S3\nRemote State"]
+    classDef awsCompute fill:#ED7100,stroke:#232F3E,stroke-width:2px,color:#FFFFFF,font-weight:bold;
+    classDef awsNetwork fill:#8C4FFF,stroke:#232F3E,stroke-width:2px,color:#FFFFFF,font-weight:bold;
+    classDef awsStorage fill:#3F8624,stroke:#232F3E,stroke-width:2px,color:#FFFFFF,font-weight:bold;
+    classDef awsMgmt fill:#C925D1,stroke:#232F3E,stroke-width:2px,color:#FFFFFF,font-weight:bold;
+    classDef client fill:#232F3E,stroke:#4A5568,stroke-width:2px,color:#FFFFFF,font-weight:bold;
+    classDef cicd fill:#2088FF,stroke:#232F3E,stroke-width:2px,color:#FFFFFF,font-weight:bold;
+
+    GHA["GitHub Actions CI/CD"]:::cicd -->|1. Get Bucket Name| SSM_Param["AWS Systems Manager\nParameter Store"]:::awsMgmt
+    GHA -->|2. State Backend| S3["Amazon S3 Bucket\nRemote State"]:::awsStorage
     GHA -.->|3. Terraform Apply| VPC
 
-    Internet([🌐 Internet]) -->|HTTP :80| ALB[Application Load Balancer\nPublic Subnets Multi-AZ]
+    Internet([🌐 Internet]):::client -->|HTTP :80| ALB["Application Load Balancer\nPublic Subnets Multi-AZ"]:::awsNetwork
     
     subgraph VPC ["AWS VPC (10.0.0.0/16)"]
-        subgraph PublicZone ["Subnets Públicas"]
-            direction LR
+        subgraph PublicZone ["Subnets Públicas (Multi-AZ)"]
             PubSub0["Public Subnet A\n10.0.1.0/24"]
             PubSub1["Public Subnet B\n10.0.2.0/24"]
-            NAT["NAT Gateway + EIP\n(Public Subnet A)"]
-            IGW["Internet Gateway"]
+            NAT["NAT Gateway + EIP"]:::awsNetwork
+            IGW["Internet Gateway"]:::awsNetwork
         end
 
         subgraph PrivateZone ["Subnet Privada"]
             PrivSub0["Private Subnet A\n10.0.3.0/24"]
-            EC2["EC2 Instance (Amazon Linux 2)\nDocker Container :80\n(nginxdemos/hello)"]
+            EC2["Amazon EC2 Instance\nDocker :80 (nginxdemos/hello)"]:::awsCompute
         end
 
         ALB -.->|Forward :80\nOnly from ALB SG| EC2
@@ -48,7 +54,7 @@ flowchart TD
         IGW --> Internet
     end
 
-    Developer([👨‍💻 DevOps / Admin]) -.->|AWS SSM Session Manager\nEncrypted Tunnel / No SSH| EC2
+    Developer([👨‍💻 DevOps / Admin]):::client -.->|AWS SSM Session Manager\nEncrypted Tunnel / No SSH| EC2
 ```
 
 ---
